@@ -1,1 +1,1 @@
-# hse-neural-network-course-project
+mkdir build && cd build && cmake .. && make project-demo
