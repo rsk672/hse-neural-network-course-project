@@ -1,6 +1,13 @@
 #include "error_block.h"
 
-Eigen::VectorXd ErrorBlock::GetDerivative(Eigen::VectorXd& input, Eigen::VectorXd& expected) {
-    Eigen::VectorXd result = -2 * (expected - input);
-    return result;
+namespace NeuralNetworkApp {
+
+double ErrorBlock::GetErrorValue(const Vector& input, const Vector& expected) const {
+    return error_func_(input, expected);
 }
+
+Vector ErrorBlock::GetGradientValue(const Vector& input, const Vector& expected) const {
+    return gradient_(input, expected);
+}
+
+}  // namespace NeuralNetworkApp

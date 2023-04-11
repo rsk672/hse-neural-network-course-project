@@ -3,25 +3,30 @@
 #include <random>
 #include <Eigen/Dense>
 #include "activation_function.h"
+#include "global.h"
+
+namespace NeuralNetworkApp {
 
 class Layer {
 
 public:
-    Layer(size_t input_size, size_t output_size, ActivationFunction activation);
+    Layer(size_t input_size, size_t output_size, FunctionType func);
 
-    Eigen::VectorXd PushForward(Eigen::VectorXd& x);
+    Vector PushForward(const Vector& x);
 
-    Eigen::VectorXd PushBackwards(Eigen::VectorXd& u);
+    Vector PushBackwards(const Vector& u, Matrix& grad_A_curr, Vector& grad_b_curr);
 
-    void UpdateParams(double speed);
+    void ShiftParams(const Matrix& A_update, const Vector& b_update);
+
+    size_t GetInputSize() const;
+
+    size_t GetOutputSize() const;
 
 private:
-    Eigen::MatrixXd A_;  // layer params
-    Eigen::VectorXd b_;  // layer params
+    Matrix A_;  // layer params
+    Vector b_;  // layer params
     ActivationFunction activation_;
-    Eigen::VectorXd input_;
-    Eigen::MatrixXd sum_grad_A_;
-    Eigen::VectorXd sum_grad_b_;
-
-    void InitializeParams(size_t n, size_t m);
+    Vector input_;
 };
+
+}  // namespace NeuralNetworkApp

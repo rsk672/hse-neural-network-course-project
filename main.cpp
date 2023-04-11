@@ -2,30 +2,42 @@
 #include "src/neural_network.h"
 
 int main() {
+
     std::vector<std::vector<double>> train_input{};
     std::vector<std::vector<double>> train_output{};
-    std::vector<std::vector<double>> test_data{};
 
-    for (size_t i = 0; i < 2000; ++i) {
-        bool x1 = rand() % 2;
-        bool x2 = rand() % 2;
-        bool y = x1 != x2;
-        train_input.push_back({x1 * 1.0, x2 * 1.0});
-        train_output.push_back({y * 1.0});
+    for (size_t i = 0; i < 200; ++i) {
+        int x1 = rand() % 2;
+        int x2 = rand() % 2;
+        int y = (x1 != x2);
+
+        train_input.push_back({static_cast<double>(x1), static_cast<double>(x2)});
+        train_output.push_back({static_cast<double>(y)});
     }
 
-    NeuralNetwork network({2, 4, 4, 1});
-    network.SetActivationFunction(
-        [](double x) { return 0.5 * tanh(x) + 0.5; },
-        [](double x) { return 2.0 / ((exp(-x) + exp(x)) * (exp(-x) + exp(x))); });
+    NeuralNetworkApp::NeuralNetwork network({2, 4, 4, 4, 1},
+                                            {
+                                                NeuralNetworkApp::FunctionType::Sigmoid,
+                                                NeuralNetworkApp::FunctionType::Sigmoid,
+                                                NeuralNetworkApp::FunctionType::Sigmoid,
+                                                NeuralNetworkApp::FunctionType::Sigmoid,
+                                            });
 
-    network.Train(train_input, train_output);
+    network.SetOptimizer(NeuralNetworkApp::OptimizerType::Adam);
 
-    for (size_t i = 0; i < 100; ++i) {
-        bool x1 = rand() % 2;
-        bool x2 = rand() % 2;
+    network.SetError(NeuralNetworkApp::ErrorType::MSE);
 
-        std::vector<double> prediction = network.Predict({x1 * 1.0, x2 * 1.0});
-        std::cout << x1 << " " << x2 << " " << prediction[0] << std::endl;
-    }
+    network.Train(train_input, train_output, 0.001, 50000);
+
+    std::vector<double> prediction = network.Predict({0, 0});
+    std::cout << "0 0 " << prediction[0] << "\n";
+
+    prediction = network.Predict({0, 1});
+    std::cout << "0 1 " << prediction[0] << "\n";
+
+    prediction = network.Predict({1, 0});
+    std::cout << "1 0 " << prediction[0] << "\n";
+
+    prediction = network.Predict({1, 1});
+    std::cout << "1 1 " << prediction[0] << "\n";
 }

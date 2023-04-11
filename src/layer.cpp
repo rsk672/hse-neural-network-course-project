@@ -1,54 +1,57 @@
 #include "layer.h"
 
-Layer::Layer(size_t input_size, size_t output_size, ActivationFunction activation) {
-    activation_ = activation;
-    InitializeParams(input_size, output_size);
+namespace NeuralNetworkApp {
+
+Layer::Layer(size_t input_size, size_t output_size, FunctionType func)
+    : A_(output_size, input_size), b_(output_size), activation_(func) {
+
+    static std::mt19937 rng;
+    static std::normal_distribution<> nd(0.0, 10.0);
+
+    A_ = A_.unaryExpr([](double dummy) { return nd(rng); });
 }
 
-Eigen::VectorXd Layer::PushForward(Eigen::VectorXd& x) {
-    input_ = x;  // save input when pushing forward
-    Eigen::VectorXd result = A_ * x + b_;
-    result = result.unaryExpr(activation_.function);
+Vector Layer::PushForward(const Vector& x) {
+    input_ = x;
+
+    Vector result = A_ * x + b_;
+
+    result = result.unaryExpr(activation_.GetFunction());
 
     return result;
 }
 
-Eigen::VectorXd Layer::PushBackwards(Eigen::VectorXd& u) {
-    Eigen::MatrixXd sigma_deriatives_matrix =
-        (A_ * input_ + b_).unaryExpr(activation_.derivative).asDiagonal();
+Vector Layer::PushBackwards(const Vector& u, Matrix& grad_A_curr, Vector& grad_b_curr) {
 
-    Eigen::MatrixXd grad_a = sigma_deriatives_matrix.transpose() * u * input_.transpose();
-    Eigen::VectorXd grad_b = sigma_deriatives_matrix.transpose() * u;
+    Matrix sigma_deriatives_matrix =
+        ((A_ * input_ + b_).unaryExpr(activation_.GetDerivative())).asDiagonal();
 
-    Eigen::VectorXd backward_u = u.transpose() * sigma_deriatives_matrix * A_;
+    // sigma_deriatives_matrix.transposeInPlace();
 
-    sum_grad_A_ += grad_a;
-    sum_grad_b_ += grad_b;
+    Matrix grad_a = sigma_deriatives_matrix * u * input_.transpose();
+
+    Vector grad_b = sigma_deriatives_matrix * u;
+
+    Vector backward_u = u.transpose() * sigma_deriatives_matrix * A_;
+
+    grad_A_curr += grad_a;
+
+    grad_b_curr += grad_b;
 
     return backward_u;
 }
 
-void Layer::UpdateParams(double speed) {
-    A_ -= sum_grad_A_ * speed;
-    b_ -= sum_grad_b_ * speed;
-    sum_grad_A_ = Eigen::MatrixXd::Zero(A_.rows(), A_.cols());
-    sum_grad_b_ = Eigen::VectorXd::Zero(b_.size());
+void Layer::ShiftParams(const Matrix& A_shift, const Vector& b_shift) {
+    A_ = A_ + A_shift;
+    b_ = b_ + b_shift;
 }
 
-void Layer::InitializeParams(size_t n, size_t m) {
-    A_ = Eigen::MatrixXd(m, n);
-    b_ = Eigen::VectorXd(m);
-
-    sum_grad_A_ = Eigen::MatrixXd(m, n);
-    sum_grad_b_ = Eigen::VectorXd(m);
-
-    std::random_device rd{};
-    std::mt19937 gen{rd()};
-    std::normal_distribution<> nd{0, 1};
-    for (size_t i = 0; i < m; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            A_(i, j) = nd(gen);
-        }
-        b_[i] = nd(gen);
-    }
+size_t Layer::GetInputSize() const {
+    return A_.cols();
 }
+
+size_t Layer::GetOutputSize() const {
+    return A_.rows();
+}
+
+}  // namespace NeuralNetworkApp
