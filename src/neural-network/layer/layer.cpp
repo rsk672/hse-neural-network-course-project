@@ -13,15 +13,13 @@ Layer::Layer(size_t input_size, size_t output_size, FunctionType func)
 
 Vector Layer::PushForward(const Vector& x) {
     input_ = x;
-
     Vector result = A_ * x + b_;
-
     result = result.unaryExpr(activation_.GetFunction());
 
     return result;
 }
 
-Vector Layer::PushBackwards(const Vector& u, Matrix& grad_A_curr, Vector& grad_b_curr) {
+Vector Layer::PushBackwards(const Vector& u, Matrix* grad_A_curr, Vector* grad_b_curr) {
 
     Matrix sigma_deriatives_matrix =
         ((A_ * input_ + b_).unaryExpr(activation_.GetDerivative())).asDiagonal();
@@ -34,9 +32,9 @@ Vector Layer::PushBackwards(const Vector& u, Matrix& grad_A_curr, Vector& grad_b
 
     Vector backward_u = u.transpose() * sigma_deriatives_matrix * A_;
 
-    grad_A_curr += grad_a;
+    *grad_A_curr += grad_a;
 
-    grad_b_curr += grad_b;
+    *grad_b_curr += grad_b;
 
     return backward_u;
 }

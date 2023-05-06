@@ -1,20 +1,24 @@
 project(neural-network-course-project)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 find_package(Eigen3 REQUIRED)
 
 set(SOURCES
     main.cpp
-    src/activation_function.cpp
-    src/error_block.cpp
-    src/layer.cpp
-    src/neural_network.cpp
-    src/optimizers/optimizer.cpp
-    src/optimizers/gd_optimizer.cpp
-    src/optimizers/sgd_optimizer.cpp
-    src/optimizers/sag_optimizer.cpp
-    src/optimizers/adam_optimizer.cpp
+    src/application.cpp
+    src/neural-network/activation-function/activation_function.cpp
+    src/neural-network/error-block/error_block.cpp
+    src/neural-network/layer/layer.cpp
+    src/neural-network/neural_network.cpp
+    src/neural-network/optimizers/base_optimizer.cpp
+    src/neural-network/optimizers/gd/gd_optimizer.cpp
+    src/neural-network/optimizers/sgd/sgd_optimizer.cpp
+    src/neural-network/optimizers/sag/sag_optimizer.cpp
+    src/neural-network/optimizers/adam/adam_optimizer.cpp
 )
 
 add_executable(project-demo ${SOURCES})

@@ -2,12 +2,27 @@
 
 namespace NeuralNetworkApp {
 
-NeuralNetwork::NeuralNetwork(std::initializer_list<size_t> layers_sizes,
-                             std::initializer_list<FunctionType> functions) {
+void NeuralNetwork::CreateLayers(const std::initializer_list<size_t>& layers_sizes,
+                                 const std::initializer_list<FunctionType>& functions) {
+    assert(layers_sizes.size() == functions.size() + 1);
     auto functions_it = functions.begin();
     for (auto it = layers_sizes.begin(); it + 1 != layers_sizes.end(); ++it) {
         layers_.emplace_back(*it, *(it + 1), *(functions_it++));
     }
+}
+
+std::vector<Vector> NeuralNetwork::TransformData(
+    const std::vector<std::vector<double>>& data) const {
+    std::vector<Vector> x;
+    for (size_t i = 0; i < data.size(); ++i) {
+        x.push_back(Eigen::Map<const Vector, Eigen::Unaligned>(data[i].data(), data[i].size()));
+    }
+    return x;
+}
+
+NeuralNetwork::NeuralNetwork(std::initializer_list<size_t> layers_sizes,
+                             std::initializer_list<FunctionType> functions) {
+    CreateLayers(layers_sizes, functions);
 }
 
 void NeuralNetwork::AddNextLayer(size_t input_size, size_t output_size, FunctionType func) {
@@ -19,25 +34,13 @@ void NeuralNetwork::SetError(ErrorType type) {
 }
 
 void NeuralNetwork::Train(const std::vector<std::vector<double>>& train_input,
-                          const std::vector<std::vector<double>>& train_output, double max_error,
+                          const std::vector<std::vector<double>>& train_output,
                           size_t max_iter_count) {
 
-    std::vector<Vector> x;
-    std::vector<Vector> y;
+    std::vector<Vector> x = TransformData(train_input);
+    std::vector<Vector> y = TransformData(train_output);
 
-    for (size_t i = 0; i < train_input.size(); ++i) {
-        x.push_back(Eigen::Map<const Vector, Eigen::Unaligned>(train_input[i].data(),
-                                                               train_input[i].size()));
-    }
-
-    for (size_t i = 0; i < train_output.size(); ++i) {
-        y.push_back(Eigen::Map<const Vector, Eigen::Unaligned>(train_output[i].data(),
-                                                               train_output[i].size()));
-    }
-
-    if (optimizer_) {
-        optimizer_->Train(layers_, error_block_, x, y, max_error, max_iter_count);
-    }
+    optimizer_->Train(layers_, error_block_, x, y, max_iter_count);
 }
 
 std::vector<double> NeuralNetwork::Predict(const std::vector<double>& data) {

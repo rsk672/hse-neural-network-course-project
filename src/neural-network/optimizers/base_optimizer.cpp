@@ -1,8 +1,8 @@
-#include "optimizer.h"
+#include "base_optimizer.h"
 
 namespace NeuralNetworkApp {
 
-double Optimizer::GetAverageError(std::vector<Layer>& layers, const ErrorBlock& error_block,
+double BaseOptimizer::GetAverageError(std::vector<Layer>& layers, const ErrorBlock& error_block,
                                   const std::vector<Vector>& train_input,
                                   const std::vector<Vector>& train_output) const {
     size_t layers_count = layers.size();

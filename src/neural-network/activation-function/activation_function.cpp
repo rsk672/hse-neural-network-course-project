@@ -2,11 +2,11 @@
 
 namespace NeuralNetworkApp {
 
-std::function<double(double)> ActivationFunction::GetFunction() const {
+const ActivationFunction::Function& ActivationFunction::GetFunction() const {
     return function_;
 }
 
-std::function<double(double)> ActivationFunction::GetDerivative() const {
+const ActivationFunction::Function& ActivationFunction::GetDerivative() const {
     return derivative_;
 }
 

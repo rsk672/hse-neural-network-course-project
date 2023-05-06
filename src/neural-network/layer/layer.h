@@ -2,7 +2,7 @@
 
 #include <random>
 #include <Eigen/Dense>
-#include "activation_function.h"
+#include "../activation-function/activation_function.h"
 #include "global.h"
 
 namespace NeuralNetworkApp {
@@ -14,7 +14,7 @@ public:
 
     Vector PushForward(const Vector& x);
 
-    Vector PushBackwards(const Vector& u, Matrix& grad_A_curr, Vector& grad_b_curr);
+    Vector PushBackwards(const Vector& u, Matrix* grad_A_curr, Vector* grad_b_curr);
 
     void ShiftParams(const Matrix& A_update, const Vector& b_update);
 

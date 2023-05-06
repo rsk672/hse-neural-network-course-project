@@ -37,6 +37,7 @@ struct FunctionList {
 };
 
 class ActivationFunction {
+    using Function = std::function<double(double)>;
 
 public:
     ActivationFunction()
@@ -48,13 +49,13 @@ public:
         : function_(FunctionList::function(type)), derivative_(FunctionList::derivative(type)) {
     }
 
-    std::function<double(double)> GetFunction() const;
+    const Function& GetFunction() const;
 
-    std::function<double(double)> GetDerivative() const;
+    const Function& GetDerivative() const;
 
 private:
-    std::function<double(double)> function_;
-    std::function<double(double)> derivative_;
+    Function function_;
+    Function derivative_;
 };
 
 }  // namespace NeuralNetworkApp
