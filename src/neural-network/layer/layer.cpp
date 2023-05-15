@@ -1,18 +1,26 @@
 #include "layer.h"
+#include <iostream>
 
 namespace NeuralNetworkApp {
 
 Layer::Layer(size_t input_size, size_t output_size, FunctionType func)
     : A_(output_size, input_size), b_(output_size), activation_(func) {
 
-    static std::mt19937 rng;
-    static std::normal_distribution<> nd(0.0, 10.0);
+    static std::mt19937 rng(std::random_device{}());
+    static std::normal_distribution<> nd(0.0, sqrt(2.0 / (input_size + output_size)));
 
     A_ = A_.unaryExpr([](double dummy) { return nd(rng); });
 }
 
 Vector Layer::PushForward(const Vector& x) {
     input_ = x;
+    Vector result = A_ * x + b_;
+    result = result.unaryExpr(activation_.GetFunction());
+
+    return result;
+}
+
+Vector Layer::PushForwardPredict(const Vector& x) const {
     Vector result = A_ * x + b_;
     result = result.unaryExpr(activation_.GetFunction());
 

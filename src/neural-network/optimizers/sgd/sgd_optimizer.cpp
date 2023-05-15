@@ -61,7 +61,7 @@ void SGDOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& error_blo
     std::vector<size_t> perm(n);
     InitializePermutation(&perm);
 
-    std::cout << "Training: Stochastic Gradient Descent\n";
+    std::cout << "Training: Stochastic Gradient Descent" << std::endl;
 
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {

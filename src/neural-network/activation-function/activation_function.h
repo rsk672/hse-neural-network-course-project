@@ -6,7 +6,7 @@
 
 namespace NeuralNetworkApp {
 
-enum FunctionType { Sigmoid, Relu };
+enum FunctionType { Sigmoid, Relu, LeakyRelu };
 
 struct FunctionList {
     static std::function<double(double)> function(FunctionType type) {
@@ -15,6 +15,8 @@ struct FunctionList {
                 return [](double x) -> double { return 1 / (1 + exp(-x)); };
             case Relu:
                 return [](double x) -> double { return std::max(0.0, x); };
+            case LeakyRelu:
+                return [](double x) -> double { return std::max(0.01 * x, x); };
             default:
                 assert(false);
                 return [](double x) { return 0.; };
@@ -29,6 +31,8 @@ struct FunctionList {
                 };
             case Relu:
                 return [](double x) -> double { return x < 0 ? 0 : 1.0; };
+            case LeakyRelu:
+                return [](double x) -> double { return x < 0 ? 0.01 : 1.0; };
             default:
                 assert(false);
                 return [](double x) { return 0.; };

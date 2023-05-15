@@ -38,7 +38,7 @@ public:
     void Train(const std::vector<std::vector<double>>& train_input,
                const std::vector<std::vector<double>>& train_output, size_t max_iter_count);
 
-    std::vector<double> Predict(const std::vector<double>& data);
+    std::vector<double> Predict(const std::vector<double>& data) const;
 
 private:
     std::vector<Layer> layers_;

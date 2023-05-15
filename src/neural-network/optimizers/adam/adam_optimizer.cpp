@@ -108,7 +108,7 @@ void AdamOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& error_bl
 
     double current_learning_speed = learning_speed_;
 
-    std::cout << "Training: Adam\n";
+    std::cout << "Training: Adam" << std::endl;
 
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {

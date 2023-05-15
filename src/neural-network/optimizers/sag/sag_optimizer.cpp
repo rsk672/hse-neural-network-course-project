@@ -94,7 +94,7 @@ void SAGOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& error_blo
     std::vector<bool> encountered(n);
     size_t encountered_count = 0;
 
-    std::cout << "Training: SAG\n";
+    std::cout << "Training: SAG" << std::endl;
 
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {

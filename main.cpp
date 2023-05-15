@@ -3,6 +3,7 @@
 
 int main() {
     NeuralNetworkApp::Application app;
-    app.Run1();
-    // app.Run2();
+    // app.Run1();
+    app.Run2();
+    // app.Run3();
 }

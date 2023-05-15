@@ -5,7 +5,7 @@ namespace NeuralNetworkApp {
 
 class AdamOptimizer : public BaseOptimizer {
 public:
-    static constexpr double default_learning_speed_adam = 0.001;
+    static constexpr double default_learning_speed_adam = 0.0001;
     static constexpr double default_beta1 = 0.9;
     static constexpr double default_beta2 = 0.999;
     static constexpr double default_eps = 10e-8;

@@ -52,7 +52,7 @@ void GDOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& error_bloc
     size_t layers_count = layers.size();
     size_t n = train_input.size();
 
-    std::cout << "Training: Gradient Descent\n";
+    std::cout << "Training: Gradient Descent" << std::endl;
 
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {

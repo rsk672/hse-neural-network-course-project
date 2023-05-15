@@ -14,6 +14,8 @@ public:
 
     Vector PushForward(const Vector& x);
 
+    Vector PushForwardPredict(const Vector& x) const;
+
     Vector PushBackwards(const Vector& u, Matrix* grad_A_curr, Vector* grad_b_curr);
 
     void ShiftParams(const Matrix& A_update, const Vector& b_update);

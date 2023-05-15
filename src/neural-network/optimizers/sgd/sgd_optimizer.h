@@ -12,10 +12,7 @@ public:
     SGDOptimizer(size_t batch_size, double speed)
         : batch_size_(batch_size), learning_speed_(speed) {
     }
-    SGDOptimizer(double speed) : learning_speed_(speed) {
-    }
-    SGDOptimizer(size_t batch_size) : batch_size_(batch_size) {
-    }
+
     void Train(std::vector<Layer>& layers, const ErrorBlock& error_block,
                const std::vector<Vector>& train_input, const std::vector<Vector>& train_output,
                size_t max_iter_count) const override;

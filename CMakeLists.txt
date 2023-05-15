@@ -14,11 +14,11 @@ set(SOURCES
     src/neural-network/error-block/error_block.cpp
     src/neural-network/layer/layer.cpp
     src/neural-network/neural_network.cpp
-    src/neural-network/optimizers/base_optimizer.cpp
     src/neural-network/optimizers/gd/gd_optimizer.cpp
     src/neural-network/optimizers/sgd/sgd_optimizer.cpp
     src/neural-network/optimizers/sag/sag_optimizer.cpp
     src/neural-network/optimizers/adam/adam_optimizer.cpp
+    src/mnist/mnist_reader.cpp
 )
 
 add_executable(project-demo ${SOURCES})

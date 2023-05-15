@@ -43,11 +43,11 @@ void NeuralNetwork::Train(const std::vector<std::vector<double>>& train_input,
     optimizer_->Train(layers_, error_block_, x, y, max_iter_count);
 }
 
-std::vector<double> NeuralNetwork::Predict(const std::vector<double>& data) {
+std::vector<double> NeuralNetwork::Predict(const std::vector<double>& data) const {
     Vector x(Eigen::Map<const Vector, Eigen::Unaligned>(data.data(), data.size()));
 
     for (auto it = layers_.begin(); it != layers_.end(); ++it) {
-        x = it->PushForward(x);
+        x = it->PushForwardPredict(x);
     }
 
     return std::vector<double>(x.data(), x.data() + x.size());
