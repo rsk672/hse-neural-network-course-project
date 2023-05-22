@@ -77,7 +77,7 @@ void Application::Run1() {
     std::cout << "1 1 " << prediction[0] << "\n";
 }
 
-void Application::Run2() {
+void Application::Run2() { 
     NeuralNetwork network({2, 4, 4, 4, 1},
                           {
                               FunctionType::Sigmoid,
@@ -86,6 +86,28 @@ void Application::Run2() {
                               FunctionType::Sigmoid,
                           },
                           SGDOptimizer(16, 5.0), ErrorType::MSE);
+
+    network.Train(xor_train_input_, xor_train_output_, 10000);
+
+    std::vector<double> prediction = network.Predict({0, 0});
+    std::cout << "0 0 " << prediction[0] << "\n";
+    prediction = network.Predict({0, 1});
+    std::cout << "0 1 " << prediction[0] << "\n";
+    prediction = network.Predict({1, 0});
+    std::cout << "1 0 " << prediction[0] << "\n";
+    prediction = network.Predict({1, 1});
+    std::cout << "1 1 " << prediction[0] << "\n";
+}
+
+void Application::Run3() {
+    NeuralNetwork network({2, 4, 4, 4, 1},
+                          {
+                              FunctionType::LeakyRelu,
+                              FunctionType::Sigmoid,
+                              FunctionType::Sigmoid,
+                              FunctionType::LeakyRelu,
+                          },
+                          SGDMomentumOptimizer(16, 2.0, 0.90), ErrorType::MSE);
 
     network.Train(xor_train_input_, xor_train_output_, 10000);
 
@@ -123,7 +145,7 @@ void Application::CalculateMNISTAccuracy(const std::vector<std::vector<double>>&
     std::cout << "Accuracy: " << predicted_cnt / labels.size();
 }
 
-void Application::Run3() {
+void Application::Run4() {
 
     auto train_input = NormalizeMNISTImages(mnist_train_images_);
     auto train_output = OneHotEncodeMNISTLabels(mnist_train_labels_);

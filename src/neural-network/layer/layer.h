@@ -24,6 +24,9 @@ public:
 
     size_t GetOutputSize() const;
 
+    Matrix GetMatrixParams() const;
+    Vector GetVectorParams() const;
+
 private:
     Matrix A_;  // layer params
     Vector b_;  // layer params

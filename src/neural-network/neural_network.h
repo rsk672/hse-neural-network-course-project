@@ -7,8 +7,8 @@
 #include "error-block/error_block.h"
 #include "optimizers/gd/gd_optimizer.h"
 #include "optimizers/sgd/sgd_optimizer.h"
-#include "optimizers/sag/sag_optimizer.h"
 #include "optimizers/adam/adam_optimizer.h"
+#include "optimizers/sgd_momentum/sgd_momentum_optimizer.h"
 
 namespace NeuralNetworkApp {
 

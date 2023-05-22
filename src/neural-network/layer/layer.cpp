@@ -40,9 +40,13 @@ Vector Layer::PushBackwards(const Vector& u, Matrix* grad_A_curr, Vector* grad_b
 
     Vector backward_u = u.transpose() * sigma_deriatives_matrix * A_;
 
-    *grad_A_curr += grad_a;
+    if (grad_A_curr) {
+        *grad_A_curr += grad_a;
+    }
 
-    *grad_b_curr += grad_b;
+    if (grad_b_curr) {
+        *grad_b_curr += grad_b;
+    }
 
     return backward_u;
 }
@@ -58,6 +62,14 @@ size_t Layer::GetInputSize() const {
 
 size_t Layer::GetOutputSize() const {
     return A_.rows();
+}
+
+Matrix Layer::GetMatrixParams() const {
+    return A_;
+}
+
+Vector Layer::GetVectorParams() const {
+    return b_;
 }
 
 }  // namespace NeuralNetworkApp

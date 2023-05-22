@@ -5,8 +5,10 @@ namespace NeuralNetworkApp {
 void NeuralNetwork::CreateLayers(const std::initializer_list<size_t>& layers_sizes,
                                  const std::initializer_list<FunctionType>& functions) {
     assert(layers_sizes.size() == functions.size() + 1);
+    assert(layers_sizes.size() > 1);
     auto functions_it = functions.begin();
     for (auto it = layers_sizes.begin(); it + 1 != layers_sizes.end(); ++it) {
+        assert(*it > 0);
         layers_.emplace_back(*it, *(it + 1), *(functions_it++));
     }
 }

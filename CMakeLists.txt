@@ -16,10 +16,14 @@ set(SOURCES
     src/neural-network/neural_network.cpp
     src/neural-network/optimizers/gd/gd_optimizer.cpp
     src/neural-network/optimizers/sgd/sgd_optimizer.cpp
-    src/neural-network/optimizers/sag/sag_optimizer.cpp
     src/neural-network/optimizers/adam/adam_optimizer.cpp
+    src/neural-network/optimizers/sgd_momentum/sgd_momentum_optimizer.cpp
     src/mnist/mnist_reader.cpp
 )
+
+enable_testing()
+add_subdirectory(src)
+add_subdirectory(tests)
 
 add_executable(project-demo ${SOURCES})
 target_link_libraries(project-demo PRIVATE Eigen3::Eigen)
