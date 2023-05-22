@@ -44,8 +44,8 @@ void SGDOptimizer::UpdateLayerParams(std::vector<Layer>* layers, const std::vect
                                      size_t vectors_count) const {
     size_t layers_count = layers->size();
     for (size_t j = 0; j < layers_count; ++j) {
-        layers->at(j).ShiftParams(-grads_A[j] * learning_speed_ / vectors_count,
-                                  -grads_b[j] * learning_speed_ / vectors_count);
+        layers->at(j).ShiftParams(-grads_A[j] * learning_speed_ / batch_size_,
+                                  -grads_b[j] * learning_speed_ / batch_size_);
     }
 }
 

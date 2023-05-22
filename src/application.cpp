@@ -85,9 +85,9 @@ void Application::Run2() {
                               FunctionType::Sigmoid,
                               FunctionType::Sigmoid,
                           },
-                          SGDOptimizer(16, 5.0), ErrorType::MSE);
+                          SGDOptimizer(16, 0.5), ErrorType::MSE);
 
-    network.Train(xor_train_input_, xor_train_output_, 10000);
+    network.Train(xor_train_input_, xor_train_output_, 20000);
 
     std::vector<double> prediction = network.Predict({0, 0});
     std::cout << "0 0 " << prediction[0] << "\n";
@@ -107,7 +107,7 @@ void Application::Run3() {
                               FunctionType::Sigmoid,
                               FunctionType::Sigmoid,
                           },
-                          SGDMomentumOptimizer(8, 0.05, 0.9), ErrorType::MSE);
+                          SGDMomentumOptimizer(16, 0.1, 0.4), ErrorType::MSE);
 
     network.Train(xor_train_input_, xor_train_output_, 50000);
 

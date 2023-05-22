@@ -54,8 +54,10 @@ void SGDMomentumOptimizer::UpdateInertions(const std::vector<Matrix>& grads_A,
                                            std::vector<Vector>* inertions_b) const {
     size_t count = grads_A.size();
     for (size_t i = 0; i < count; ++i) {
-        inertions_A->at(i) = momentum_ * inertions_A->at(i) + learning_speed_ * grads_A[i];
-        inertions_b->at(i) = momentum_ * inertions_b->at(i) + learning_speed_ * grads_b[i];
+        inertions_A->at(i) =
+            momentum_ * inertions_A->at(i) + learning_speed_ * grads_A[i] / batch_size_;
+        inertions_b->at(i) =
+            momentum_ * inertions_b->at(i) + learning_speed_ * grads_b[i] / batch_size_;
     }
 }
 
@@ -65,7 +67,7 @@ void SGDMomentumOptimizer::UpdateLayerParams(std::vector<Layer>* layers,
                                              size_t vectors_count) const {
     size_t layers_count = layers->size();
     for (size_t i = 0; i < layers_count; ++i) {
-        layers->at(i).ShiftParams(-inertions_A[i] / vectors_count, -inertions_b[i] / vectors_count);
+        layers->at(i).ShiftParams(-inertions_A[i], -inertions_b[i]);
     }
 }
 
