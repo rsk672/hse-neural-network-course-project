@@ -25,11 +25,9 @@ private:
 
     void InitializePermutation(std::vector<size_t>* perm) const;
 
-    void InitializeParamsBuffers(const std::vector<Layer>& layers,
-                                  std::vector<Matrix>* prev_A,
-                                  std::vector<Vector>* prev_b,
-                                  std::vector<Matrix>* current_A,
-                                  std::vector<Vector>* current_b) const;
+    void InitializeInertionBuffers(const std::vector<Layer>& layers,
+                                   std::vector<Matrix>* inertions_A,
+                                   std::vector<Vector>* inertions_b) const;
 
     void CalculateGradientsOnBatch(std::vector<Layer>* layers, std::vector<Matrix>* grads_A,
                                    std::vector<Vector>* grads_b, const ErrorBlock& error_block,
@@ -37,10 +35,11 @@ private:
                                    const std::vector<Vector>& train_input,
                                    const std::vector<Vector>& train_output) const;
 
-    void UpdateLayerParams(std::vector<Layer>* layers, const std::vector<Matrix>& grads_A,
-                           const std::vector<Vector>& grads_b, std::vector<Matrix>* prev_A,
-                           std::vector<Vector>* prev_b, std::vector<Matrix>* current_A,
-                           std::vector<Vector>* current_b, size_t vectors_count) const;
+    void UpdateInertions(const std::vector<Matrix>& grads_A, const std::vector<Vector>& grads_b,
+                         std::vector<Matrix>* inertions_A, std::vector<Vector>* inertions_b) const;
+
+    void UpdateLayerParams(std::vector<Layer>* layers, const std::vector<Matrix>& inertions_A,
+                           const std::vector<Vector>& inertions_b, size_t vectors_count) const;
 };
 
 }  // namespace NeuralNetworkApp

@@ -99,17 +99,17 @@ void Application::Run2() {
     std::cout << "1 1 " << prediction[0] << "\n";
 }
 
-void Application::Run3() {
+void Application::Run3() { 
     NeuralNetwork network({2, 4, 4, 4, 1},
                           {
-                              FunctionType::LeakyRelu,
                               FunctionType::Sigmoid,
                               FunctionType::Sigmoid,
-                              FunctionType::LeakyRelu,
+                              FunctionType::Sigmoid,
+                              FunctionType::Sigmoid,
                           },
-                          SGDMomentumOptimizer(16, 2.0, 0.90), ErrorType::MSE);
+                          SGDMomentumOptimizer(8, 0.05, 0.9), ErrorType::MSE);
 
-    network.Train(xor_train_input_, xor_train_output_, 10000);
+    network.Train(xor_train_input_, xor_train_output_, 50000);
 
     std::vector<double> prediction = network.Predict({0, 0});
     std::cout << "0 0 " << prediction[0] << "\n";

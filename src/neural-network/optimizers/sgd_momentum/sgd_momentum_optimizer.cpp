@@ -13,16 +13,12 @@ void SGDMomentumOptimizer::InitializePermutation(std::vector<size_t>* perm) cons
     }
 }
 
-void SGDMomentumOptimizer::InitializeParamsBuffers(const std::vector<Layer>& layers,
-                                                   std::vector<Matrix>* prev_A,
-                                                   std::vector<Vector>* prev_b,
-                                                   std::vector<Matrix>* current_A,
-                                                   std::vector<Vector>* current_b) const {
+void SGDMomentumOptimizer::InitializeInertionBuffers(const std::vector<Layer>& layers,
+                                                     std::vector<Matrix>* inertions_A,
+                                                     std::vector<Vector>* inertions_b) const {
     for (size_t j = 0; j < layers.size(); ++j) {
-        prev_A->at(j) = Matrix(layers[j].GetOutputSize(), layers[j].GetInputSize());
-        prev_b->at(j) = Vector(layers[j].GetOutputSize());
-        current_A->at(j) = Matrix(layers[j].GetOutputSize(), layers[j].GetInputSize());
-        current_b->at(j) = Vector(layers[j].GetOutputSize());
+        inertions_A->at(j) = Matrix(layers[j].GetOutputSize(), layers[j].GetInputSize());
+        inertions_b->at(j) = Vector(layers[j].GetOutputSize());
     }
 }
 
@@ -52,22 +48,24 @@ void SGDMomentumOptimizer::CalculateGradientsOnBatch(
     }
 }
 
-void SGDMomentumOptimizer::UpdateLayerParams(
-    std::vector<Layer>* layers, const std::vector<Matrix>& grads_A,
-    const std::vector<Vector>& grads_b, std::vector<Matrix>* prev_A, std::vector<Vector>* prev_b,
-    std::vector<Matrix>* current_A, std::vector<Vector>* current_b, size_t vectors_count) const {
-    size_t layers_count = layers->size();
-    for (size_t j = 0; j < layers_count; ++j) {
-        layers->at(j).ShiftParams(
-            -grads_A[j] * learning_speed_ / vectors_count +
-                momentum_ / vectors_count * (current_A->at(j) - prev_A->at(j)),
-            -grads_b[j] * learning_speed_ / vectors_count +
-                momentum_ / vectors_count * (current_b->at(j) - prev_b->at(j)));
+void SGDMomentumOptimizer::UpdateInertions(const std::vector<Matrix>& grads_A,
+                                           const std::vector<Vector>& grads_b,
+                                           std::vector<Matrix>* inertions_A,
+                                           std::vector<Vector>* inertions_b) const {
+    size_t count = grads_A.size();
+    for (size_t i = 0; i < count; ++i) {
+        inertions_A->at(i) = momentum_ * inertions_A->at(i) + learning_speed_ * grads_A[i];
+        inertions_b->at(i) = momentum_ * inertions_b->at(i) + learning_speed_ * grads_b[i];
+    }
+}
 
-        prev_A->at(j) = current_A->at(j);
-        prev_b->at(j) = current_b->at(j);
-        current_A->at(j) = layers->at(j).GetMatrixParams();
-        current_b->at(j) = layers->at(j).GetVectorParams();
+void SGDMomentumOptimizer::UpdateLayerParams(std::vector<Layer>* layers,
+                                             const std::vector<Matrix>& inertions_A,
+                                             const std::vector<Vector>& inertions_b,
+                                             size_t vectors_count) const {
+    size_t layers_count = layers->size();
+    for (size_t i = 0; i < layers_count; ++i) {
+        layers->at(i).ShiftParams(-inertions_A[i] / vectors_count, -inertions_b[i] / vectors_count);
     }
 }
 
@@ -84,14 +82,11 @@ void SGDMomentumOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& e
     std::vector<size_t> perm(n);
     InitializePermutation(&perm);
 
-    std::vector<Matrix> prev_A(layers_count);
-    std::vector<Vector> prev_b(layers_count);
-    std::vector<Matrix> current_A(layers_count);
-    std::vector<Vector> current_b(layers_count);
-    InitializeParamsBuffers(layers, &prev_A, &prev_b, &current_A, &current_b);
+    std::vector<Matrix> inertions_A(layers_count);
+    std::vector<Vector> inertions_b(layers_count);
+    InitializeInertionBuffers(layers, &inertions_A, &inertions_b);
 
     std::cout << "Training: Stochastic Gradient Descent With Momentum" << std::endl;
-
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {
         std::shuffle(perm.begin(), perm.end(), mt);
@@ -102,7 +97,9 @@ void SGDMomentumOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& e
         CalculateGradientsOnBatch(&layers, &grads_A, &grads_b, error_block, perm, train_input,
                                   train_output);
 
-        UpdateLayerParams(&layers, grads_A, grads_b, &prev_A, &prev_b, &current_A, &current_b, n);
+        UpdateInertions(grads_A, grads_b, &inertions_A, &inertions_b);
+
+        UpdateLayerParams(&layers, inertions_A, inertions_b, n);
 
         ++iter_count;
     }
