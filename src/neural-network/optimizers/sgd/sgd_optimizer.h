@@ -30,7 +30,7 @@ private:
                                    const std::vector<Vector>& train_output) const;
 
     void UpdateLayerParams(std::vector<Layer>* layers, const std::vector<Matrix>& grads_A,
-                           const std::vector<Vector>& grads_b, size_t vectors_count) const;
+                           const std::vector<Vector>& grads_b) const;
 };
 
 }  // namespace NeuralNetworkApp

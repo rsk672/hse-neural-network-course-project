@@ -79,10 +79,10 @@ void AdamOptimizer::UpdateLayerParams(std::vector<Layer>* layers, double current
 
     for (size_t i = 0; i < layers->size(); ++i) {
         Matrix A_shift = (-current_learning_speed * current_m_A[i].array() /
-                          (current_v_A[i].array().sqrt() - eps_))
+                          (current_v_A[i].array().sqrt() + eps_))
                              .matrix();
         Vector b_shift = (-current_learning_speed * current_m_b[i].array() /
-                          (current_v_b[i].array().sqrt() - eps_));
+                          (current_v_b[i].array().sqrt() + eps_));
 
         layers->at(i).ShiftParams(A_shift, b_shift);
     }
@@ -112,24 +112,16 @@ void AdamOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& error_bl
 
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {
-
-        std::shuffle(perm.begin(), perm.end(),
-                     mt);  // shuffling vector indices to choose random vectors for batch
-
+        std::shuffle(perm.begin(), perm.end(), mt);
         std::vector<Matrix> grads_A(layers_count);
         std::vector<Vector> grads_b(layers_count);
-
         CalculateGradientsOnBatch(&layers, &grads_A, &grads_b, error_block, perm, train_input,
                                   train_output);
-
         UpdateMoments(grads_A, grads_b, &current_m_A, &current_m_b, &current_v_A, &current_v_b);
-
         current_learning_speed = learning_speed_ * sqrt(1 - pow(beta2_, iter_count + 1)) /
                                  (1 - pow(beta1_, iter_count + 1));
-
         UpdateLayerParams(&layers, current_learning_speed, current_m_A, current_m_b, current_v_A,
                           current_v_b);
-
         ++iter_count;
     }
 }

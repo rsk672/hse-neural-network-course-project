@@ -63,8 +63,7 @@ void SGDMomentumOptimizer::UpdateInertions(const std::vector<Matrix>& grads_A,
 
 void SGDMomentumOptimizer::UpdateLayerParams(std::vector<Layer>* layers,
                                              const std::vector<Matrix>& inertions_A,
-                                             const std::vector<Vector>& inertions_b,
-                                             size_t vectors_count) const {
+                                             const std::vector<Vector>& inertions_b) const {
     size_t layers_count = layers->size();
     for (size_t i = 0; i < layers_count; ++i) {
         layers->at(i).ShiftParams(-inertions_A[i], -inertions_b[i]);
@@ -92,17 +91,12 @@ void SGDMomentumOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& e
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {
         std::shuffle(perm.begin(), perm.end(), mt);
-
         std::vector<Matrix> grads_A(layers_count);
         std::vector<Vector> grads_b(layers_count);
-
         CalculateGradientsOnBatch(&layers, &grads_A, &grads_b, error_block, perm, train_input,
                                   train_output);
-
         UpdateInertions(grads_A, grads_b, &inertions_A, &inertions_b);
-
-        UpdateLayerParams(&layers, inertions_A, inertions_b, n);
-
+        UpdateLayerParams(&layers, inertions_A, inertions_b);
         ++iter_count;
     }
 }

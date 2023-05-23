@@ -40,8 +40,7 @@ void SGDOptimizer::CalculateGradientsOnBatch(
 }
 
 void SGDOptimizer::UpdateLayerParams(std::vector<Layer>* layers, const std::vector<Matrix>& grads_A,
-                                     const std::vector<Vector>& grads_b,
-                                     size_t vectors_count) const {
+                                     const std::vector<Vector>& grads_b) const {
     size_t layers_count = layers->size();
     for (size_t j = 0; j < layers_count; ++j) {
         layers->at(j).ShiftParams(-grads_A[j] * learning_speed_ / batch_size_,
@@ -66,15 +65,11 @@ void SGDOptimizer::Train(std::vector<Layer>& layers, const ErrorBlock& error_blo
     size_t iter_count = 0;
     while (iter_count < max_iter_count) {
         std::shuffle(perm.begin(), perm.end(), mt);
-
         std::vector<Matrix> grads_A(layers_count);
         std::vector<Vector> grads_b(layers_count);
-
         CalculateGradientsOnBatch(&layers, &grads_A, &grads_b, error_block, perm, train_input,
                                   train_output);
-
-        UpdateLayerParams(&layers, grads_A, grads_b, n);
-
+        UpdateLayerParams(&layers, grads_A, grads_b);
         ++iter_count;
     }
 }

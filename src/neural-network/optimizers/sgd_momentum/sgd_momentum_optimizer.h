@@ -39,7 +39,7 @@ private:
                          std::vector<Matrix>* inertions_A, std::vector<Vector>* inertions_b) const;
 
     void UpdateLayerParams(std::vector<Layer>* layers, const std::vector<Matrix>& inertions_A,
-                           const std::vector<Vector>& inertions_b, size_t vectors_count) const;
+                           const std::vector<Vector>& inertions_b) const;
 };
 
 }  // namespace NeuralNetworkApp
