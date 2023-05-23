@@ -7,7 +7,7 @@ Layer::Layer(size_t input_size, size_t output_size, FunctionType func)
     : A_(output_size, input_size), b_(output_size), activation_(func) {
 
     static std::mt19937 rng(std::random_device{}());
-    static std::normal_distribution<> nd(0.0, sqrt(2.0 / (input_size + output_size)));
+    static std::normal_distribution<> nd(0.0, sqrt(2.0 / (input_size)));
 
     A_ = A_.unaryExpr([](double dummy) { return nd(rng); });
 }

@@ -15,6 +15,8 @@ public:
 
     void Run4();
 
+    void Run5();
+
 private:
     std::vector<std::vector<double>> xor_train_input_;
     std::vector<std::vector<double>> xor_train_output_;
