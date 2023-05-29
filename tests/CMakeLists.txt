@@ -13,5 +13,3 @@ target_link_libraries(GTest::GTest INTERFACE gtest_main)
 add_subdirectory(activation-function)
 add_subdirectory(error-block)
 add_subdirectory(layer)
-
-

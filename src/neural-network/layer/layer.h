@@ -28,8 +28,8 @@ public:
     Vector GetVectorParams() const;
 
 private:
-    Matrix A_;  // layer params
-    Vector b_;  // layer params
+    Matrix A_;
+    Vector b_;
     ActivationFunction activation_;
     Vector input_;
 };
